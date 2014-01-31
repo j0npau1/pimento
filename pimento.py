@@ -52,6 +52,9 @@
 #
 #   Future Plans:
 #
+#   * Add a feature to stop recording after a certain elapsed time, frame
+#     count, or final video length
+#
 #   * Integrate pycam instead of using subprocess.call to take the pictures.
 #
 #   * Ditch the Apache dependency for broadcast mode and instead use web.py to
@@ -132,7 +135,7 @@ def send_command(session):
         command = ["raspistill", "-o", "/var/www/preview.png"] + session.params
         call(command)
     
-# The main funtion to capture pictures and display info to the user. It records
+# The main function to capture pictures and display info to the user. It records
 # the system time just before and just after capturing the image, so the time it
 # takes to capture can be subtracted from the delay interval for precise timing.
 def record(session):
@@ -162,7 +165,8 @@ def record(session):
         # suggestions are welcome.
         elapsed = time.strftime("%H:%M:%S", time.gmtime(time.time()-starttime))
         vidsecs = float(session.framecount)/session.fps
-        length = time.strftime("%H:%M:%S.", time.gmtime(vidsecs)) + str("%02d" % ((vidsecs - int(vidsecs)) * 100))
+        vidmsecs = str("%02d" % ((vidsecs - int(vidsecs)) * 100))
+        length = time.strftime("%H:%M:%S.", time.gmtime(vidsecs)) + vidmsecs
 
         stdout.write("\r%d\t%s\t%s" % (session.framecount, elapsed, length))
         stdout.flush()
